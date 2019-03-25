@@ -27,7 +27,7 @@ public class OrderDao {
         Payment payment = new Payment();
         payment.setId(1);
         payment.setCardNumber("1234 4321 4567 7654");
-        payment.setExpiringDate("02/22");
+        payment.setExpiringDate("02/1922");
         payment.setCardFlag("Visa");
 
         order.setPayment(payment);

@@ -1,7 +1,6 @@
 package br.com.fiap.orderservice.model;
 
 import lombok.*;
-
 import java.math.BigDecimal;
 
 

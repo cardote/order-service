@@ -5,9 +5,7 @@ import br.com.fiap.orderservice.model.Order;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
-
 import java.net.URI;
-import java.util.ArrayList;
 
 @RestController
 public class OrderController {
@@ -28,11 +26,17 @@ public class OrderController {
 
     @PostMapping("/orders")
     public ResponseEntity<Object> save(@RequestBody() Order order){
-        URI location = ServletUriComponentsBuilder
-                .fromCurrentRequest()
-                .path("/{id}")
-                .buildAndExpand(daoOrder.save(order).getId()).toUri();
-        return ResponseEntity.ok(location);
+
+        try {
+            URI location = ServletUriComponentsBuilder
+                    .fromCurrentRequest()
+                    .path("/{id}")
+                    .buildAndExpand(daoOrder.save(order).getId()).toUri();
+            return ResponseEntity.ok(location);
+        } catch (Exception e) {
+            return ResponseEntity.ok("Order already registered");
+        }
+
     }
 
     @PutMapping("/orders")

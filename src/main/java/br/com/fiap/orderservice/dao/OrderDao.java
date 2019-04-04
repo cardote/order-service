@@ -1,5 +1,6 @@
 package br.com.fiap.orderservice.dao;
 
+import br.com.fiap.orderservice.exception.InternalErrorException;
 import br.com.fiap.orderservice.model.Order;
 import br.com.fiap.orderservice.model.Payment;
 import br.com.fiap.orderservice.model.Product;
@@ -15,57 +16,65 @@ public class OrderDao {
     private Order[] orders = new Order[200];
 
     public OrderDao() {
-        Order order = new Order();
 
-        order.setId(1);
-        order.setFullName("Nome Exemplo");
-        order.setEmail("exemplo@exemplo.com");
-        order.setShippingAddress("Rua Exemplo, 23, Exemplo-Ex");
-        order.setDate("22/02/1993");
-        order.setStatus("Aprovado");
+        for(int k = 0; k < 100; k++){
+            Order order = new Order();
 
-        Payment payment = new Payment();
-        payment.setId(1);
-        payment.setCardNumber("1234 4321 4567 7654");
-        payment.setExpiringDate("02/1922");
-        payment.setCardFlag("Visa");
+            order.setId(k);
+            order.setFullName("Nome Exemplo");
+            order.setEmail("exemplo@exemplo.com");
+            order.setShippingAddress("Rua Exemplo, 23, Exemplo-Ex");
+            order.setDate("22/02/1993");
+            order.setStatus("Aprovado");
 
-        order.setPayment(payment);
+            Payment payment = new Payment();
+            payment.setId(k);
+            payment.setCardNumber("1234 4321 4567 7654");
+            payment.setExpiringDate("02/1922");
+            payment.setCardFlag("Visa");
 
-        Product products[] = new Product[4];
+            order.setPayment(payment);
 
-        BigDecimal total = new BigDecimal(0);
+            Product products[] = new Product[4];
 
-        for(int i = 0; i < products.length; i++){
-            products[i] = new Product();
-            products[i].setIdOrder(1);
-            products[i].setDescription("Item A"+ i);
-            products[i].setAmount(1);
-            products[i].setValue(new BigDecimal(52.33*(i+1)).setScale(2, BigDecimal.ROUND_HALF_EVEN));
-            total = total.add(products[i].getValue().setScale(2, BigDecimal.ROUND_HALF_EVEN));
+            BigDecimal total = new BigDecimal(0);
+
+            for(int i = 0; i < products.length; i++){
+                products[i] = new Product();
+                products[i].setIdOrder(k);
+                products[i].setDescription("Item A"+ i);
+                products[i].setAmount(1);
+                products[i].setValue(new BigDecimal(52.33*(i+1)).setScale(2, BigDecimal.ROUND_HALF_EVEN));
+                total = total.add(products[i].getValue().setScale(2, BigDecimal.ROUND_HALF_EVEN));
+            }
+            order.setTotal(total);
+            order.setProducts(products);
+            orders[k] = order;
         }
-        order.setTotal(total);
-        order.setProducts(products);
-        orders[order.getId()] = order;
+
     }
 
     public Order findById(int id) {
-        return orders[id];
+        try {
+            return orders[id];
+        } catch (Exception e){
+            throw new InternalErrorException("Error: " + e);
+        }
+
     }
 
     public Order save(Order order) {
-        if(orders[order.getId()] == null){
+        if(this.findById(order.getId()) != null){
+            return null;
+        } else {
             orders[order.getId()] = order;
             return order;
-        } else {
-            return null;
         }
-
     }
 
     public Order update(Order order) {
         int id = order.getId();
-        if(orders[id] != null){
+        if(this.findById(id) != null){
             orders[id].setFullName(order.getFullName());
             orders[id].setEmail(order.getEmail());
             orders[id].setDate(order.getDate());
@@ -80,7 +89,7 @@ public class OrderDao {
     }
 
     public boolean delete(int id){
-        if(orders[id] != null){
+        if(this.findById(id) != null){
             orders[id] = null;
             return true;
         }

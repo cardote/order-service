@@ -4,6 +4,8 @@ import br.com.fiap.orderservice.dao.OrderDao;
 import br.com.fiap.orderservice.exception.OrderNotFoundException;
 import br.com.fiap.orderservice.exception.OrderNotUpdatedException;
 import br.com.fiap.orderservice.model.Order;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,6 +15,7 @@ import java.net.URI;
 
 @Slf4j
 @RestController
+@Api(value = "Order", description = "a list of orders")
 public class OrderController {
 
     private Order[] orders;
